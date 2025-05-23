@@ -1,4 +1,4 @@
-import { IError } from "src/interfaces/errors.interface";
+import { IError } from "src/interfaces/common/IErrors.interface";
 import { StatusCodes } from "http-status-codes";
 
 export abstract class CustomError extends Error {

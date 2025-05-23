@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { AppConf } from "../constants";
 
 const config = AppConf();
-export const connectDb = () => {
+export const connectMongooseDb = () => {
     const connect = () => {
         mongoose
             .connect(config.DATABASE_URL)
