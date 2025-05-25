@@ -1,8 +1,6 @@
 import express, { Express } from "express";
 import { SetUpServer } from "src/config/server.config";
-import { CloudinaryConfig } from "./config/cloudinary.config";
-import { connectMongooseDb } from "./config/mongooseDb.config";
-import { connectMySqlDb } from "./config/mySqlDb.config";
+import { CloudinaryConfig, connectMySqlDb } from "./config";
 
 class Application {
     public initialize(): void {

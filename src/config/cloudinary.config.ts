@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
-import { AppConf } from "src/constants";
-const config = AppConf();
+import { appConf } from "src/constants";
+const config = appConf();
 
 export class CloudinaryConfig {
     static configure(): void {

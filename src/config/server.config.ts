@@ -16,11 +16,11 @@ import http, { createServer } from "http";
 import { StatusCodes } from "http-status-codes";
 import { createClient } from "redis";
 import { Server } from "socket.io";
-import { AppConf } from "../constants";
 import applicationRoutes from "../routes/routes";
 import { errorMiddleware } from "../middlewares/common/errors.middleware";
+import { appConf } from "src/constants";
 
-const config = AppConf();
+const config = appConf();
 
 export class SetUpServer {
     private app: Application;

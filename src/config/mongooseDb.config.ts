@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { AppConf } from "../constants";
+import { appConf } from "src/constants";
 
-const config = AppConf();
+const config = appConf();
 export const connectMongooseDb = () => {
     const connect = () => {
         mongoose

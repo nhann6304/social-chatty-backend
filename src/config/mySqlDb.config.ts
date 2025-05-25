@@ -1,30 +1,34 @@
-import { AppConf, ValuesCont } from "src/constants";
-import mysql from "mysql2";
+// src/database/connect.ts
+import { DataSource } from "typeorm";
+import { appConf, valuesCont } from "src/constants";
+import { MainModule } from "src/modules/main.module";
 
-const config = AppConf();
-const confVal = ValuesCont();
+const config = appConf();
+const confVal = valuesCont();
 
-export const connectMySqlDb = () => {
-    const connect = () => {
-        const connection = mysql.createConnection({
-            host: config.DATABASE_HOST,
-            port: +config.DATABASE_PORT,
-            user: config.DATABASE_USER,
-            password: config.DATABASE_PASSWORD,
-            database: config.DATABASE_NAME,
-            timezone: "+07:00",
-        });
+// ✅ Tạo và export DataSource ra ngoài
+export const AppDataSource = new DataSource({
+    type: "mysql",
+    host: config.DATABASE_HOST,
+    port: +config.DATABASE_PORT,
+    username: config.DATABASE_USER,
+    password: config.DATABASE_PASSWORD,
+    database: config.DATABASE_NAME,
+    timezone: "+07:00",
+    synchronize: true,
+    logging: false,
+    entities: MainModule,
+    maxQueryExecutionTime: 3000,
+    extra: {
+        connectionLimit: 10,
+    },
+});
 
-        connection.connect((err) => {
-            if (err) {
-                console.error(`${confVal.FAIL} Kết nối MySQL thất bại:`, err);
-            } else {
-                console.log(`${confVal.SUCCESS} Kết nối MySQL thành công!`);
-            }
-        });
-
-        return connection;
-    };
-
-    return connect();
+export const connectMySqlDb = async (): Promise<void> => {
+    try {
+        await AppDataSource.initialize();
+        console.log(`${confVal.SUCCESS} Kết nối MySQL thành công!`);
+    } catch (err) {
+        console.error(`${confVal.FAIL} Kết nối MySQL thất bại:`, err);
+    }
 };
