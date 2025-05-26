@@ -16,13 +16,16 @@ export function uploads({
     invalidate?: boolean;
 }): Promise<UploadApiResponse | UploadApiErrorResponse | undefined> {
     return new Promise((resolve) => {
-        cloudinary.uploader.upload(file, { public_id, overwrite, invalidate }),
+        cloudinary.uploader.upload(
+            file,
+            { public_id, overwrite, invalidate },
             (
                 error: UploadApiErrorResponse | undefined,
                 result: UploadApiResponse | undefined
             ) => {
-                if (error) resolve(error);
+                if (error) return resolve(error);
                 resolve(result);
-            };
+            }
+        );
     });
 }

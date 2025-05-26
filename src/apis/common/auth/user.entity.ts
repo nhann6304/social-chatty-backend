@@ -1,17 +1,15 @@
 // src/entities/User.entity.ts
 
 import { compare, hash } from "bcryptjs";
-import { ABaseModel } from "src/abstracts/common/ABaseModel.abstract";
-import { valuesCont } from "src/constants";
-import { IUser } from "src/interfaces/models";
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    BeforeInsert,
+    BeforeInsert
 } from "typeorm";
+import { ABaseModel } from "src/abstracts/common/ABaseModel.abstract";
+import { IUser } from "src/interfaces/models";
+import { valuesCont } from "src/constants";
+import { ISocialLinks } from "src/interfaces/child";
 
 const ConstVal = valuesCont();
 
@@ -20,17 +18,20 @@ export class UserEntity extends ABaseModel implements IUser {
     @Column({ type: "varchar" })
     us_auth: string;
 
-    @Column({ type: "varchar", nullable: true })
-    us_name?: string;
+    @Column({ type: "varchar" })
+    us_name: string;
 
     @Column({ type: "varchar", nullable: true, unique: true })
-    us_email?: string;
+    us_email: string;
 
     @Column({ type: "varchar", nullable: true })
-    us_password?: string;
+    us_password: string;
 
     @Column({ type: "varchar", nullable: true })
     us_avatar_color?: string;
+
+    @Column({ type: "varchar" })
+    us_avatarImage: string;
 
     @Column({ type: "varchar", nullable: true })
     us_uid?: string;
@@ -51,10 +52,10 @@ export class UserEntity extends ABaseModel implements IUser {
     us_location: string;
 
     @Column({ type: "json", nullable: true })
-    us_blocked: string[];
+    us_blocked: string[]; // chứa danh sách userId bị chặn
 
     @Column({ type: "json", nullable: true })
-    us_blocked_by: string[];
+    us_blocked_by: string[]; // chứa danh sách userId đã chặn user này
 
     @Column({ type: "int", default: 0 })
     us_followers_count: number;
@@ -62,11 +63,22 @@ export class UserEntity extends ABaseModel implements IUser {
     @Column({ type: "int", default: 0 })
     us_following_count: number;
 
-    @Column({ type: "json", nullable: true })
-    us_setting_notifications: string;
+    @Column({
+        type: "json",
+        nullable: true
+    })
+    us_setting_notifications: {
+        messages: boolean;
+        reactions: boolean;
+        comments: boolean;
+        follows: boolean;
+    };
 
-    @Column({ type: "json", nullable: true })
-    us_social: string;
+    @Column({
+        type: "json",
+        nullable: true
+    })
+    us_social: ISocialLinks;
 
     @Column({ type: "varchar", nullable: true })
     us_bg_image_version: string;
@@ -79,10 +91,9 @@ export class UserEntity extends ABaseModel implements IUser {
 
     @BeforeInsert()
     async hashPasswordBeforeInsert(): Promise<void> {
-        this.us_password = await hash(
-            this.us_password,
-            ConstVal.SALT_ROUND_PASSWORD
-        );
+        if (this.us_password) {
+            this.us_password = await hash(this.us_password, ConstVal.SALT_ROUND_PASSWORD);
+        }
     }
 
     async comparePassword(password: string): Promise<boolean> {

@@ -4,21 +4,21 @@ import {
     IsEmail,
     IsOptional,
     IsString,
-    MinLength,
-    MaxLength,
     IsArray,
-    IsJSON,
     IsInt,
+    ValidateNested,
+    IsObject,
+    IsNotEmpty,
 } from "class-validator";
-import { UserEntity } from "src/entity/user.entity";
+import { Type } from "class-transformer";
+import { INotificationSettings, ISocialLinks } from "src/interfaces/child";
 
-export class CreateUserDto extends UserEntity {
-    // @IsString()
-    // us_auth: string;
-
-    @IsOptional()
+export class CreateUserDto {
     @IsString()
-    us_name?: string;
+    us_auth: string;
+
+    @IsString()
+    us_name: string;
 
     @IsOptional()
     @IsEmail()
@@ -26,57 +26,74 @@ export class CreateUserDto extends UserEntity {
 
     @IsOptional()
     @IsString()
-    @MinLength(6)
-    @MaxLength(32)
     us_password?: string;
 
-    // @IsOptional()
-    // @IsString()
-    // us_avatar_color?: string;
+    @IsString()
+    us_avatarImage: string;
 
-    // @IsOptional()
-    // @IsString()
-    // us_uid?: string;
+    @IsOptional()
+    @IsString()
+    us_avatar_color?: string;
 
-    // @IsOptional()
-    // us_posts_count: number;
+    @IsOptional()
+    @IsString()
+    us_uid?: string;
 
-    // @IsString()
-    // us_work: string;
+    @IsOptional()
+    @IsInt()
+    us_posts_count?: number;
 
-    // @IsString()
-    // us_school: string;
+    @IsOptional()
+    @IsString()
+    us_work?: string;
 
-    // @IsString()
-    // us_quote: string;
+    @IsOptional()
+    @IsString()
+    us_school?: string;
 
-    // @IsString()
-    // us_location: string;
+    @IsOptional()
+    @IsString()
+    us_quote?: string;
 
-    // @IsArray()
-    // us_blocked: string[];
+    @IsOptional()
+    @IsString()
+    us_location?: string;
 
-    // @IsArray()
-    // us_blocked_by: string[];
+    @IsOptional()
+    @IsArray()
+    us_blocked?: string[];
 
-    // @IsInt()
-    // us_followers_count: number;
+    @IsOptional()
+    @IsArray()
+    us_blocked_by?: string[];
 
-    // @IsInt()
-    // us_following_count: number;
+    @IsOptional()
+    @IsInt()
+    us_followers_count?: number;
 
-    // @IsString()
-    // us_setting_notifications: string;
+    @IsOptional()
+    @IsInt()
+    us_following_count?: number;
 
-    // @IsString()
-    // us_social: string;
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    us_setting_notifications?: INotificationSettings;
 
-    // @IsString()
-    // us_bg_image_version: string;
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    us_social?: ISocialLinks;
 
-    // @IsString()
-    // us_bg_image_id: string;
+    @IsOptional()
+    @IsString()
+    us_bg_image_version?: string;
 
-    // @IsString()
-    // us_profile_picture: string;
+    @IsOptional()
+    @IsString()
+    us_bg_image_id?: string;
+
+    @IsOptional()
+    @IsString()
+    us_profile_picture?: string;
 }

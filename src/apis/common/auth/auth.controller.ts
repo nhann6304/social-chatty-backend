@@ -7,13 +7,12 @@ import { CreateUserDto } from "./auth.dto";
 class AuthController {
     public async create(req: Request, res: Response) {
         const payload = req.body as CreateUserDto;
-        console.log("payload:::", payload);
 
         const item = await authService.create(payload);
 
         new OK({
             message: "Lụm",
-            metadata: item
+            metadata: item,
         }).send(res);
     }
 }

@@ -17,9 +17,7 @@ import { StatusCodes } from "http-status-codes";
 import { createClient } from "redis";
 import { Server } from "socket.io";
 import applicationRoutes from "../routes/routes";
-import {
-    registerGlobalErrorHandler,
-} from "../middlewares/common/errors.middleware";
+import { registerGlobalErrorHandler } from "../middlewares/common/errors.middleware";
 import { appConf } from "src/constants";
 
 const config = appConf();

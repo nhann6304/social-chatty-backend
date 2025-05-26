@@ -6,7 +6,7 @@ class Application {
     public initialize(): void {
         // connectMongooseDb();
         connectMySqlDb();
-        this.loadConfig;
+        this.loadConfig();
         const app: Express = express();
         const server: any = new SetUpServer(app);
         server.start();

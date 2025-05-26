@@ -6,10 +6,12 @@ import { ISocialLinks } from "../child/ISocialLinks.interface";
 
 export interface IUser extends IBaseModel<IUser> {
     us_auth: IUser | string;
-    us_name?: string;
-    us_email?: string;
-    us_password?: string;
+    us_name: string;
+    us_email: string;
+    us_password: string;
     us_avatar_color?: string;
+    // Ảnh đại diện
+    us_avatarImage: string;
     us_uid?: string;
 
     us_posts_count: number;
@@ -19,9 +21,9 @@ export interface IUser extends IBaseModel<IUser> {
     us_location: string;
 
     // người dùng mà user này đã chặn.
-    us_blocked: string[];
+    us_blocked: string[] | IUser[];
     // người dùng đã chặn user này.
-    us_blocked_by: string[];
+    us_blocked_by: string[] | IUser[];
 
     // người dùng đang theo dõi user này
     us_followers_count: number;
