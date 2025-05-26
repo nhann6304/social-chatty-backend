@@ -17,7 +17,9 @@ import { StatusCodes } from "http-status-codes";
 import { createClient } from "redis";
 import { Server } from "socket.io";
 import applicationRoutes from "../routes/routes";
-import { errorMiddleware } from "../middlewares/common/errors.middleware";
+import {
+    registerGlobalErrorHandler,
+} from "../middlewares/common/errors.middleware";
 import { appConf } from "src/constants";
 
 const config = appConf();
@@ -76,16 +78,7 @@ export class SetUpServer {
 
     // Xử lý lỗi toàn cục(middleware cuối cùng):
     private globalErrorHandler(app: Application): void {
-        // Check đường dẫn không tồn tại gửi lên client
-        app.all("*", (req: Request, res: Response) => {
-            res
-                .status(StatusCodes.NOT_FOUND)
-                .json({ message: `${req.originalUrl} Đường dẫn không tồn tại` });
-        });
-
-        app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-            errorMiddleware;
-        });
+        registerGlobalErrorHandler(app);
     }
 
     // Cáu hình server khởi chạy(Server, Server socketIO)

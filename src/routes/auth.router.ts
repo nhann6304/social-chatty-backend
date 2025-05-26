@@ -1,4 +1,7 @@
 import express, { Router } from "express";
+import { authController } from "src/apis/common/auth/auth.controller";
+import { CreateUserDto } from "src/apis/common/auth/auth.dto";
+import { validateDto } from "src/helper/dtoValidate.helper";
 
 class AuthRoutes {
     private router: Router;
@@ -8,9 +11,7 @@ class AuthRoutes {
     }
 
     public routes(): Router {
-        this.router.get("/", (req, res) => {
-            res.send("Auth route is working!");
-        });
+        this.router.post("/", validateDto(CreateUserDto), authController.create);
         // this.router.post("/signup");
         return this.router;
     }

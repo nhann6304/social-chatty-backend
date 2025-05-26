@@ -1,20 +1,31 @@
+// src/helpers/validateDto.helper.ts
+
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
-import { Request, Response, NextFunction } from "express";
+import { validateOrReject } from "class-validator";
+import { NextFunction, Request, Response } from "express";
+import { BadRequestException } from "src/abstracts/common/ACustomError.abstract";
 
-export function validateDto(dtoClass: any) {
-    return async (req: Request, res: Response, next: NextFunction) => {
-        const dtoObject = plainToInstance(dtoClass, req.body);
-        const errors = await validate(dtoObject);
+export const validateDto = <T extends object>(Dto: new () => T) => {
+    return async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            const instance = plainToInstance(Dto, req.body, {
+                enableImplicitConversion: true,
+            });
 
-        if (errors.length > 0) {
-            const messages = errors
-                .map((err) => Object.values(err.constraints || {}))
-                .flat();
-            return res.status(400).json({ errors: messages });
+            await validateOrReject(instance, {
+                whitelist: true, // loại bỏ fields không khai báo
+                forbidNonWhitelisted: true, // nếu có field lạ => lỗi
+            });
+
+            req.body = instance; // gán lại vào req.body để dùng sau
+            next();
+        } catch (error) {
+            // Gửi lỗi về middleware xử lý chung
+            return next(new BadRequestException("Dữ liệu không hợp lệ"));
         }
-
-        req.body = dtoObject;
-        next();
     };
-}
+};
