@@ -1,12 +1,20 @@
 // src/interfaces/IUser.interface.ts
-import { ObjectId } from "mongodb";
-import { IBaseModel } from "../common/IBaseMode.interface";
+import { EGender } from "src/enum";
 import { INotificationSettings } from "../child/INotificationSettings.interface";
 import { ISocialLinks } from "../child/ISocialLinks.interface";
+import { IBaseModel } from "../common/IBaseMode.interface";
+
+export interface IGenderTitle {
+    title: string;
+}
 
 export interface IUser extends IBaseModel<IUser> {
     us_auth: IUser | string;
-    us_name: string;
+    us_firstName: string;
+    us_lastName: string;
+
+    us_gender: EGender | IGenderTitle;
+
     us_email: string;
     us_password: string;
     us_avatar_color?: string;

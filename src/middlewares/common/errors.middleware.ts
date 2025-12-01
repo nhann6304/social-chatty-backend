@@ -1,6 +1,6 @@
 import { Application, Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
-import { CustomError } from "src/abstracts/common/ACustomError.abstract"; // đường dẫn đến CustomError của bạn
+import { CustomError } from "src/abstracts/common/ACustomError.abstract";
 
 // Hàm chính dùng để gọi ở app.ts
 export function registerGlobalErrorHandler(app: Application): void {
@@ -9,6 +9,7 @@ export function registerGlobalErrorHandler(app: Application): void {
         res.status(StatusCodes.NOT_FOUND).json({
             message: `${req.originalUrl} - Đường dẫn không tồn tại`,
             status: "fail",
+            statusCode: StatusCodes.NOT_FOUND,
         });
     });
 

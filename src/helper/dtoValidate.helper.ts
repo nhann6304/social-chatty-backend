@@ -1,7 +1,7 @@
 // src/helpers/validateDto.helper.ts
 
 import { plainToInstance } from "class-transformer";
-import { validateOrReject } from "class-validator";
+import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import { BadRequestException } from "src/abstracts/common/ACustomError.abstract";
 
@@ -16,15 +16,35 @@ export const validateDto = <T extends object>(Dto: new () => T) => {
                 enableImplicitConversion: true,
             });
 
-            await validateOrReject(instance, {
-                whitelist: true, // loại bỏ fields không khai báo
-                forbidNonWhitelisted: true, // nếu có field lạ => lỗi
+            const errors = await validate(instance, {
+                whitelist: true,
+                forbidNonWhitelisted: true,
             });
 
-            req.body = instance; // gán lại vào req.body để dùng sau
+            if (errors.length > 0) {
+                // Format lỗi chi tiết
+                const errorMessages = errors.map((error) => ({
+                    field: error.property,
+                    constraints: error.constraints,
+                    value: error.value,
+                }));
+
+                console.log(
+                    "Validation Errors:",
+                    JSON.stringify(errorMessages, null, 2)
+                );
+
+                return next(
+                    new BadRequestException(
+                        "Dữ liệu không hợp lệ: " + JSON.stringify(errorMessages)
+                    )
+                );
+            }
+
+            req.body = instance;
             next();
         } catch (error) {
-            // Gửi lỗi về middleware xử lý chung
+            console.error("Validation Error:", error);
             return next(new BadRequestException("Dữ liệu không hợp lệ"));
         }
     };

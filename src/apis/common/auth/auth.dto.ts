@@ -1,99 +1,131 @@
-// src/dtos/user/create-user.dto.ts
-
 import {
     IsEmail,
-    IsOptional,
     IsString,
     IsArray,
     IsInt,
     ValidateNested,
     IsObject,
     IsNotEmpty,
+    IsOptional,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { INotificationSettings, ISocialLinks } from "src/interfaces/child";
+import { PartialType } from "@nestjs/mapped-types";
+import { UserEntity } from "./user.entity";
+import { CONST_ERROR } from "src/constants/constErro.constant";
 
 export class CreateUserDto {
+    // ===== REQUIRED FIELDS =====
     @IsString()
-    us_auth: string;
+    @IsNotEmpty({
+        message: CONST_ERROR.FIELD_NOT_EMPTY("Họ"),
+    })
+    us_firstName: string;
 
     @IsString()
-    us_name: string;
+    @IsNotEmpty({
+        message: CONST_ERROR.FIELD_NOT_EMPTY("Tên"),
+    })
+    us_lastName: string;
 
+    @IsString()
+    @IsNotEmpty({
+        message: CONST_ERROR.FIELD_NOT_EMPTY("Giới tính"),
+    })
+    us_gender: string;
+
+    @IsString()
+    @IsNotEmpty({
+        message: CONST_ERROR.FIELD_NOT_EMPTY(
+            "Số điện thoại, Email không được để trống"
+        ),
+    })
+    identifier: string;
+
+    @IsString()
+    @IsNotEmpty({
+        message: CONST_ERROR.FIELD_NOT_EMPTY("Mật khẩu không được để trống"),
+    })
+    us_password: string;
+
+    // ===== OPTIONAL FIELDS - THÊM @IsOptional() =====
+    @IsString()
     @IsOptional()
+    us_auth?: string;
+
     @IsEmail()
+    @IsOptional()
     us_email?: string;
 
-    @IsOptional()
     @IsString()
-    us_password?: string;
+    @IsOptional()
+    us_avatarImage?: string;
 
     @IsString()
-    us_avatarImage: string;
-
     @IsOptional()
-    @IsString()
     us_avatar_color?: string;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_uid?: string;
 
-    @IsOptional()
     @IsInt()
+    @IsOptional()
     us_posts_count?: number;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_work?: string;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_school?: string;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_quote?: string;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_location?: string;
 
-    @IsOptional()
     @IsArray()
+    @IsOptional()
     us_blocked?: string[];
 
-    @IsOptional()
     @IsArray()
+    @IsOptional()
     us_blocked_by?: string[];
 
-    @IsOptional()
     @IsInt()
+    @IsOptional()
     us_followers_count?: number;
 
-    @IsOptional()
     @IsInt()
+    @IsOptional()
     us_following_count?: number;
 
-    @IsOptional()
     @IsObject()
     @ValidateNested()
+    @Type(() => Object)
+    @IsOptional()
     us_setting_notifications?: INotificationSettings;
 
-    @IsOptional()
     @IsObject()
     @ValidateNested()
+    @Type(() => Object)
+    @IsOptional()
     us_social?: ISocialLinks;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_bg_image_version?: string;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_bg_image_id?: string;
 
-    @IsOptional()
     @IsString()
+    @IsOptional()
     us_profile_picture?: string;
 }

@@ -5,60 +5,60 @@ import { CreateUserDto } from "./auth.dto";
 import { Request, Response } from "express";
 import { IUser } from "src/interfaces/models";
 import { BadRequestException } from "src/abstracts/common/ACustomError.abstract";
-import { UtilCalculate } from "src/utils";
+import { UtilCalculate, UtilsChecked } from "src/utils";
 import { ObjectId } from "mongoose";
 import { uploads } from "src/helper/uploadCloud.helper";
 import { v4 as uuidv4 } from "uuid";
+import { EGender } from "src/enum";
+import { CheckedIsEmail } from "src/utils/checked.util";
 class AuthService {
     private userRepository = AppDataSource.getRepository(UserEntity);
 
-    public async getUserByUsernameOrEmail({
-        us_email,
-        us_name,
-    }: Pick<IUser, "us_name" | "us_email">) {
-        const username = UtilConvert.convertFirstLetterUppercase(us_name);
+    public async getUserByEmail({ us_email }: Pick<IUser, "us_email">) {
         const email = UtilConvert.lowerCase(us_email);
 
         const findUser = await this.userRepository.findOne({
-            where: [{ us_name: username }, { us_email: us_email }],
+            where: [{ us_email: us_email }],
         });
 
         return findUser;
     }
 
-    public async create(payload: CreateUserDto) {
-        const { us_name, us_email } = payload;
-
+    public async register(payload: CreateUserDto) {
         const uId = `${UtilCalculate.generateRandomIntegers(10)}`;
         const userId = uuidv4();
 
-        const checkIfUserExist = await this.getUserByUsernameOrEmail({
-            us_email,
-            us_name,
-        });
+        //check  identifier là email hay số điện thoại
 
-        if (checkIfUserExist) {
-            throw new BadRequestException("Người dùng đã tồn tại");
+        if (UtilsChecked.CheckedIsEmail(payload.identifier)) {
+            console.log("Vao");
         }
 
-
-        const result = await uploads({
-            file: payload.us_avatarImage,
-            public_id: `social/${userId}`,
-            invalidate: true,
-            overwrite: true,
-        });
-        if (!result?.public_id) {
-            throw new BadRequestException("Upload file thất bại");
+        if (UtilsChecked.CheckedIsPhone(payload.identifier)) {
+            console.log("Vao ");
         }
 
-        const dataCreate = this.userRepository.create({
+        // const checkIfUserExist = await this.getUserByEmail({
+        //     us_email,
+        // });
+
+        // if (checkIfUserExist) {
+        //     throw new BadRequestException("Người dùng đã tồn tại");
+        // }
+
+        // Upload hình ảnh
+        // const result = await uploads({
+        //     file: payload.us_avatarImage,
+        //     public_id: `social/${userId}`,
+        //     invalidate: true,
+        //     overwrite: true,
+        // });
+
+        const { identifier, us_avatarImage, ...userData } = payload;
+
+        return {
             ...payload,
-            us_uid: uId,
-            us_avatarImage: result.secure_url
-        });
-
-        return dataCreate;
+        };
     }
 }
 

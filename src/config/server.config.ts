@@ -81,15 +81,11 @@ export class SetUpServer {
 
     // Cáu hình server khởi chạy(Server, Server socketIO)
     private async startServer(app: Application): Promise<void> {
-        try {
-            const httpServer = createServer(app);
-            // const socketIO: Server = await this.createSocketIO(httpServer); // tắt thằng này khỏi chạy docker
-            this.startHttpServer(httpServer);
-            // tắt thằng này khỏi chạy docker
-            // this.socketIOConnection(socketIO);
-        } catch (error) {
-            console.log(error);
-        }
+        const httpServer = createServer(app);
+        // const socketIO: Server = await this.createSocketIO(httpServer); // tắt thằng này khỏi chạy docker
+        this.startHttpServer(httpServer);
+        // tắt thằng này khỏi chạy docker
+        // this.socketIOConnection(socketIO);
     }
 
     // Khởi tạo Socket.IO nếu app có sử dụng realtime(chat, notification...).

@@ -1,19 +1,25 @@
 import { Request, Response } from "express";
 import { BadRequestException } from "src/abstracts/common/ACustomError.abstract";
-import { OK } from "src/core/response.core";
 import { authService } from "./auth.service";
 import { CreateUserDto } from "./auth.dto";
+import { SuccessResponse } from "src/core/response.core";
 
 class AuthController {
-    public async create(req: Request, res: Response) {
+    public async register(req: Request, res: Response) {
         const payload = req.body as CreateUserDto;
 
-        const item = await authService.create(payload);
+        const item = await authService.register(payload);
 
-        new OK({
+        return res.status(200).json({
             message: "Lụm",
             metadata: item,
-        }).send(res);
+        });
+    }
+
+    public async hello(req: Request, res: Response) {
+        SuccessResponse.OK(res, {
+            message: "Hello",
+        });
     }
 }
 

@@ -1,15 +1,12 @@
 // src/entities/User.entity.ts
 
 import { compare, hash } from "bcryptjs";
-import {
-    Entity,
-    Column,
-    BeforeInsert
-} from "typeorm";
+import { Entity, Column, BeforeInsert } from "typeorm";
 import { ABaseModel } from "src/abstracts/common/ABaseModel.abstract";
-import { IUser } from "src/interfaces/models";
+import { IGenderTitle, IUser } from "src/interfaces/models";
 import { valuesCont } from "src/constants";
 import { ISocialLinks } from "src/interfaces/child";
+import { EGender } from "src/enum";
 
 const ConstVal = valuesCont();
 
@@ -19,7 +16,13 @@ export class UserEntity extends ABaseModel implements IUser {
     us_auth: string;
 
     @Column({ type: "varchar" })
-    us_name: string;
+    us_firstName: string;
+
+    @Column({ type: "varchar" })
+    us_lastName: string;
+
+    @Column({ type: "varchar" })
+    us_gender: EGender | IGenderTitle;
 
     @Column({ type: "varchar", nullable: true, unique: true })
     us_email: string;
@@ -65,7 +68,7 @@ export class UserEntity extends ABaseModel implements IUser {
 
     @Column({
         type: "json",
-        nullable: true
+        nullable: true,
     })
     us_setting_notifications: {
         messages: boolean;
@@ -76,7 +79,7 @@ export class UserEntity extends ABaseModel implements IUser {
 
     @Column({
         type: "json",
-        nullable: true
+        nullable: true,
     })
     us_social: ISocialLinks;
 
@@ -92,7 +95,10 @@ export class UserEntity extends ABaseModel implements IUser {
     @BeforeInsert()
     async hashPasswordBeforeInsert(): Promise<void> {
         if (this.us_password) {
-            this.us_password = await hash(this.us_password, ConstVal.SALT_ROUND_PASSWORD);
+            this.us_password = await hash(
+                this.us_password,
+                ConstVal.SALT_ROUND_PASSWORD
+            );
         }
     }
 
