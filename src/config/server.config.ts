@@ -106,7 +106,6 @@ export class SetUpServer {
 
     // Khởi chạy toàn bộ
     private startHttpServer(httpServer: http.Server): void {
-        // console.log(`Server has started with process ${process.pid}`);
         httpServer.listen(config.SERVER_PORT, () => {
             console.log(`✅ Server is running ${config.SERVER_PORT}`);
         });
