@@ -1,11 +1,13 @@
 import { Application } from "express";
-import { authRoutes } from "./auth.router";
+import { AuthRouter, HealRouter } from ".";
 
 const BASE_PATH = "/api/v1";
 
 export default (app: Application) => {
     const routes = () => {
-        app.use(BASE_PATH, authRoutes.routes());
+        app.use(BASE_PATH, AuthRouter.authRoutes.routes());
+        //
+        app.use(BASE_PATH, HealRouter.healRoutes.routes());
     };
     routes();
 };

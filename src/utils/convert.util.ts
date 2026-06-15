@@ -1,5 +1,6 @@
 export class UtilConvert {
     static convertFirstLetterUppercase(str: string): string {
+        if (!str) return "";
         const valueString = str.toLocaleLowerCase();
         return valueString
             .split("")
@@ -13,6 +14,6 @@ export class UtilConvert {
     }
 
     static lowerCase(str: string): string {
-        return str.toLocaleLowerCase();
+        return str?.toLocaleLowerCase() ?? "";
     }
 }

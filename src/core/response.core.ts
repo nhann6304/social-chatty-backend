@@ -1,8 +1,6 @@
 import { Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { availableMemory } from "process";
 import { IBaseResponse } from "src/interfaces/core/IBaseResponse.interface";
-import { ArrayOverlap } from "typeorm";
 
 export abstract class RESPONSE<T = any> {
     message: string;

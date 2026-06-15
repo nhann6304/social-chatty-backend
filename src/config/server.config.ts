@@ -5,20 +5,16 @@ import cors from "cors";
 import {
     Application,
     json,
-    NextFunction,
-    Request,
-    Response,
-    urlencoded,
+    urlencoded
 } from "express";
 import helmet from "helmet";
 import hpp from "hpp";
 import http, { createServer } from "http";
-import { StatusCodes } from "http-status-codes";
 import { createClient } from "redis";
 import { Server } from "socket.io";
-import applicationRoutes from "../routes/routes";
-import { registerGlobalErrorHandler } from "../middlewares/common/errors.middleware";
 import { appConf } from "src/constants";
+import { registerGlobalErrorHandler } from "../middlewares/common/errors.middleware";
+import applicationRoutes from "../routes/routes";
 
 const config = appConf();
 

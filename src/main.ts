@@ -3,6 +3,10 @@ import { SetUpServer } from "src/config/server.config";
 import { CloudinaryConfig, connectMySqlDb } from "./config";
 
 class Application {
+    public loadConfig(): void {
+        CloudinaryConfig.configure();
+    }
+
     public initialize(): void {
         // connectMongooseDb();
         connectMySqlDb();
@@ -11,11 +15,8 @@ class Application {
         const server: any = new SetUpServer(app);
         server.start();
     }
-
-    public loadConfig(): void {
-        CloudinaryConfig.configure();
-    }
 }
+
 // Gọi đối tượng
 const main = new Application();
 main.initialize();
