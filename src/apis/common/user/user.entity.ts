@@ -1,11 +1,7 @@
-// src/entities/User.entity.ts
+// src/apis/common/user/user.entity.ts
 
 import { compare, hash } from "bcryptjs";
-import {
-    Entity,
-    Column,
-    BeforeInsert
-} from "typeorm";
+import { Entity, Column, BeforeInsert, Index } from "typeorm";
 import { ABaseModel } from "src/abstracts/common/ABaseModel.abstract";
 import { IUser } from "src/interfaces/models";
 import { valuesCont } from "src/constants";
@@ -18,9 +14,11 @@ export class UserEntity extends ABaseModel implements IUser {
     @Column({ type: "varchar" })
     us_auth: string;
 
+    @Index() // hay tra cứu theo tên đăng nhập
     @Column({ type: "varchar" })
     us_name: string;
 
+    // unique đã tự tạo index cho cột này
     @Column({ type: "varchar", nullable: true, unique: true })
     us_email: string;
 
@@ -33,6 +31,7 @@ export class UserEntity extends ABaseModel implements IUser {
     @Column({ type: "varchar" })
     us_avatarImage: string;
 
+    @Index() // mã định danh công khai, hay dùng để tra cứu
     @Column({ type: "varchar", nullable: true })
     us_uid?: string;
 
@@ -65,7 +64,7 @@ export class UserEntity extends ABaseModel implements IUser {
 
     @Column({
         type: "json",
-        nullable: true
+        nullable: true,
     })
     us_setting_notifications: {
         messages: boolean;
@@ -76,7 +75,7 @@ export class UserEntity extends ABaseModel implements IUser {
 
     @Column({
         type: "json",
-        nullable: true
+        nullable: true,
     })
     us_social: ISocialLinks;
 
@@ -92,7 +91,10 @@ export class UserEntity extends ABaseModel implements IUser {
     @BeforeInsert()
     async hashPasswordBeforeInsert(): Promise<void> {
         if (this.us_password) {
-            this.us_password = await hash(this.us_password, ConstVal.SALT_ROUND_PASSWORD);
+            this.us_password = await hash(
+                this.us_password,
+                ConstVal.SALT_ROUND_PASSWORD,
+            );
         }
     }
 

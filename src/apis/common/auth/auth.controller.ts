@@ -1,17 +1,16 @@
 import { Request, Response } from "express";
-import { BadRequestException } from "src/abstracts/common/ACustomError.abstract";
 import { OK } from "src/core/response.core";
 import { authService } from "./auth.service";
-import { CreateUserDto } from "./auth.dto";
+import { LoginDto } from "./auth.dto";
 
 class AuthController {
-    public async create(req: Request, res: Response) {
-        const payload = req.body as CreateUserDto;
+    public async login(req: Request, res: Response) {
+        const payload = req.body as LoginDto;
 
-        const item = await authService.create(payload);
+        const item = await authService.login(payload);
 
         new OK({
-            message: "Lụm",
+            message: "Đăng nhập thành công",
             metadata: item,
         }).send(res);
     }

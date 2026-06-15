@@ -1,3 +1,3 @@
-import { UserEntity } from "src/apis/common/auth/user.entity";
+import { UserEntity } from "src/apis/common/user/user.entity";
 
 export const ModulesEntities = [UserEntity]

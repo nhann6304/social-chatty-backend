@@ -15,4 +15,8 @@ export default () => ({
     DATABASE_USER: process.env.DATABASE_USER || "root",
     DATABASE_PASSWORD: process.env.DATABASE_PASSWORD || "root",
     DATABASE_NAME: process.env.DATABASE_NAME || "social-network_db",
+    // User mặc định - tự tạo khi chạy dự án (seed)
+    DEFAULT_USER_NAME: process.env.DEFAULT_USER_NAME || "Huỳnh Nhân",
+    DEFAULT_USER_EMAIL: process.env.DEFAULT_USER_EMAIL || "huynhthanhnhan632004@gmail.com",
+    DEFAULT_USER_PASSWORD: process.env.DEFAULT_USER_PASSWORD || "Admin@123",
 });

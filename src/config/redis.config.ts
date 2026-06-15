@@ -1,4 +1,4 @@
-import { appConf, valuesCont } from "src/constants";
+import { valuesCont } from "src/constants";
 import { BaseCache } from "src/helper/base.cache.helper";
 
 const config = valuesCont();

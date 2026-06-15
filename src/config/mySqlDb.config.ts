@@ -1,13 +1,12 @@
 // src/database/connect.ts
-import { DataSource } from "typeorm";
 import { appConf, valuesCont } from "src/constants";
 import { MainModule } from "src/modules/main.module";
-import { redisConfig } from "./redis.config";
+import { DataSource } from "typeorm";
+import { runSeeders } from "src/seeds";
 
 const config = appConf();
 const confVal = valuesCont();
 
-// ✅ Tạo và export DataSource ra ngoài
 export const AppDataSource = new DataSource({
     type: "mysql",
     host: config.DATABASE_HOST,
@@ -28,9 +27,10 @@ export const AppDataSource = new DataSource({
 export const connectMySqlDb = async (): Promise<void> => {
     try {
         await AppDataSource.initialize();
-        //Connect redis
-        // redisConfig.connect();
         console.log(`${confVal.SUCCESS} Kết nối MySQL thành công!`);
+
+        // Chạy seeder (onModuleInit) cho toàn bộ dữ liệu mặc định
+        await runSeeders();
     } catch (err) {
         console.error(`${confVal.FAIL} Kết nối MySQL thất bại:`, err);
     }
