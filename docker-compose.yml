@@ -1,0 +1,62 @@
+# Hạ tầng cho dev: Redis + NATS + Elasticsearch.
+# App (Node/Express + MySQL) chạy ngoài Docker như bình thường.
+#
+#   docker compose up -d      # bật Redis + NATS + Elasticsearch
+#   docker compose ps         # xem trạng thái
+#   docker compose down       # tắt (giữ dữ liệu trong volume)
+#   docker compose down -v    # tắt + xoá luôn dữ liệu
+#
+# Lưu ý: Elasticsearch ngốn RAM (~1-2GB). Nếu máy yếu, có thể chỉ bật Redis + NATS:
+#   docker compose up -d redis nats
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: chatty-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379" # khớp REDIS_HOST=redis://localhost:6379
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"] # bật persistence (AOF)
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  nats:
+    image: nats:2-alpine
+    container_name: chatty-nats
+    restart: unless-stopped
+    ports:
+      - "4222:4222" # client — khớp NATS_URL=nats://localhost:4222
+      - "8222:8222" # HTTP monitoring (xem http://localhost:8222)
+    command: ["--http_port", "8222"] # bật trang monitoring
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: chatty-es
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node # chạy 1 node cho dev
+      - xpack.security.enabled=false # DEV: tắt bảo mật cho gọn (KHÔNG dùng cho prod)
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # giới hạn RAM heap
+    ports:
+      - "9200:9200" # khớp ELASTICSEARCH_NODE=http://localhost:9200
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  redis-data:
+  es-data:

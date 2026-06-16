@@ -9,7 +9,7 @@ export default (app: Application) => {
         //
         app.use(BASE_PATH, UserRouter.userRoutes.routes());
         //
-        app.use(BASE_PATH, HealRouter.healRoutes.routes());
+        app.use(BASE_PATH, HealRouter.healthRoutes.routes());
     };
     routes();
 };

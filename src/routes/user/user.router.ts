@@ -16,8 +16,10 @@ class UserRoutes {
             validateDto(CreateUserDto),
             userController.create,
         );
-        this.router.get("/users", userController.findAll);
-        this.router.get("/users/:id", userController.findOne);
+        this.router.get("/users/findMulti", userController.findAll);
+        // Tìm kiếm + lọc + phân trang qua Elasticsearch
+        this.router.get("/users/search", userController.search);
+        this.router.get("/users/findOne/:id", userController.findOne);
         return this.router;
     }
 }

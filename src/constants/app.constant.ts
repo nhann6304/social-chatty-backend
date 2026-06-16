@@ -3,6 +3,8 @@ export default () => ({
     SECRET_KEY_ONE: process.env.SECRET_KEY_ONE || "KEY_1",
     SECRET_KEY_TWO: process.env.SECRET_KEY_TWO || "KEY_2",
     REDIS_HOST: process.env.REDIS_HOST || "redis://localhost:6379",
+    NATS_URL: process.env.NATS_URL || "nats://localhost:4222",
+    ELASTICSEARCH_NODE: process.env.ELASTICSEARCH_NODE || "http://localhost:9200",
     CLOUDINARY_NAME: process.env.CLOUDINARY_NAME || "dbxo4txn8",
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "571465968332837",
     CLOUDINARY_API_SECRET:

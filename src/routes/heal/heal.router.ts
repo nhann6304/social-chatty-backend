@@ -1,7 +1,7 @@
 import express, { Router } from "express";
-import { healController } from "src/apis/common/heal/heal.controller";
+import { healthController } from "src/apis/common/health/health.controller";
 
-class HealRoutes {
+class HealthRoutes {
     private router: Router;
 
     constructor() {
@@ -9,10 +9,10 @@ class HealRoutes {
     }
 
     public routes(): Router {
-        this.router.get("/heal", healController.heal);
+        this.router.get("/health", healthController.health);
         // this.router.post("/signup");
         return this.router;
     }
 }
 
-export const healRoutes: HealRoutes = new HealRoutes();
+export const healthRoutes: HealthRoutes = new HealthRoutes();

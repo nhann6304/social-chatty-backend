@@ -29,3 +29,12 @@ export function uploads({
         );
     });
 }
+
+
+export function destroyCloud(public_id: string): Promise<unknown> {
+    return new Promise((resolve) => {
+        cloudinary.uploader.destroy(public_id, (_error, result) => {
+            resolve(result);
+        });
+    });
+}
