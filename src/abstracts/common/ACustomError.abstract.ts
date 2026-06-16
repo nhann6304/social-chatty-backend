@@ -19,7 +19,7 @@ export abstract class CustomError extends Error {
 }
 
 export class BadRequestException extends CustomError {
-    statusCode = StatusCodes.BAD_REQUEST;
+    statusCode = StatusCodes.BAD_REQUEST; try
     status = "error";
 
     constructor(message: string) {

@@ -16,3 +16,7 @@ export interface UserChangedEvent {
     id: string;
     action: ChangeAction;
 }
+
+export interface EventPayloads {
+    "user.changed": UserChangedEvent; // khớp EVENT_SUBJECT.USER_CHANGED
+}
