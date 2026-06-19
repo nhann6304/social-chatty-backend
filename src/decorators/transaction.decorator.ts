@@ -1,4 +1,5 @@
-import { runTransaction, IsolationLevel } from "src/database/transaction";
+import { runTransaction, } from "src/database/transaction";
+import { TIsolationLevel } from "src/type/common/IsolationLevel.type";
 
 /**
  * @StartTransaction() — đánh lên một method của service để CẢ method chạy trong
@@ -18,7 +19,7 @@ import { runTransaction, IsolationLevel } from "src/database/transaction";
  *     }
  * }
  */
-export function StartTransaction(isolationLevel?: IsolationLevel) {
+export function StartTransaction(isolationLevel?: TIsolationLevel) {
     return function (
         _target: object,
         _propertyKey: string | symbol,

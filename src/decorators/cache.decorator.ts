@@ -1,29 +1,19 @@
 import { redisConfig } from "src/config/redis.config";
+import { TCacheKey } from "src/type/cache/CacheKey.type";
+import { ICacheableOptions, ICacheEvictOptions } from "src/interfaces/cache";
 
 /**
- * Key của cache:
- * - Chuỗi cố định: "users:list:all"
- * - Hoặc HÀM nhận đúng tham số của method để dựng key động:
- *       (id: string) => `users:id:${id}`
+ * Lấy key cuối cùng để thao tác Redis:
+ * - key là chuỗi -> dùng luôn.
+ * - key là hàm   -> gọi với đúng tham số của method để ra chuỗi.
  */
-type CacheKey = string | ((...args: any[]) => string);
-
-interface CacheableOptions {
-    key: CacheKey;
-    /** Thời hạn sống (giây). Mặc định 1 giờ. */
-    ttl?: number;
+function buildKey(
+    key: TCacheKey | undefined,
+    args: unknown[],
+): string | undefined {
+    if (typeof key === "function") return key(...args);
+    return key;
 }
-
-interface CacheEvictOptions {
-    /** Xoá 1 key (hoặc hàm dựng key từ tham số). */
-    key?: CacheKey;
-    /** Xoá theo mẫu, vd "users:list:*". */
-    pattern?: CacheKey;
-}
-
-/** Dựng key thật từ string|hàm + tham số của method. */
-const resolve = (k: CacheKey | undefined, args: unknown[]): string | undefined =>
-    typeof k === "function" ? k(...args) : k;
 
 /**
  * @Cacheable — Cache-Aside cho method ĐỌC, tự động hoá hoàn toàn:
@@ -38,7 +28,7 @@ const resolve = (k: CacheKey | undefined, args: unknown[]): string | undefined =
  *     return this.userRepository.findOne({ where: { id } });
  * }
  */
-export function Cacheable(options: CacheableOptions) {
+export function Cacheable(options: ICacheableOptions) {
     const { key, ttl = 3600 } = options;
 
     return function (
@@ -49,7 +39,7 @@ export function Cacheable(options: CacheableOptions) {
         const originalMethod = descriptor.value;
 
         descriptor.value = async function (this: unknown, ...args: unknown[]) {
-            const cacheKey = resolve(key, args)!;
+            const cacheKey = buildKey(key, args)!;
 
             const cached = await redisConfig.get(cacheKey);
             if (cached !== null) return cached; // HIT
@@ -80,7 +70,7 @@ export function Cacheable(options: CacheableOptions) {
  * @CacheEvict({ key: (id: string) => `users:id:${id}`, pattern: "users:list:*" })
  * async update(id: string, dto: UpdateUserDto) { ... }
  */
-export function CacheEvict(options: CacheEvictOptions) {
+export function CacheEvict(options: ICacheEvictOptions) {
     const { key, pattern } = options;
 
     return function (
@@ -93,10 +83,10 @@ export function CacheEvict(options: CacheEvictOptions) {
         descriptor.value = async function (this: unknown, ...args: unknown[]) {
             const result = await originalMethod.apply(this, args); // ghi DB trước
 
-            const k = resolve(key, args);
+            const k = buildKey(key, args);
             if (k) await redisConfig.del(k);
 
-            const p = resolve(pattern, args);
+            const p = buildKey(pattern, args);
             if (p) await redisConfig.delByPattern(p);
 
             return result; // rồi mới invalidate cache

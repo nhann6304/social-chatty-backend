@@ -1,0 +1,8 @@
+/** Kết quả phân trang (offset) trả về cho client. */
+export interface IPaginatedResult<T> {
+    items: T[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}

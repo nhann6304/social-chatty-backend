@@ -1,50 +1,10 @@
 import { elasticsearchConfig } from "src/config/elasticsearch.config";
 import { log } from "src/utils";
-
-/** Field full-text để multi_match (kèm boost độ ưu tiên). */
-export interface SearchableField {
-    name: string;
-    boost?: number;
-}
-
-/** Khai báo cho 1 index — phần DUY NHẤT mỗi entity phải tự viết. */
-export interface SearchEngineConfig<T> {
-    /** Tên index trên ES, vd "users". */
-    index: string;
-    /** settings + mappings của index. */
-    indexBody: { settings?: object; mappings?: object };
-    /** Các field cho tìm full-text (kèm boost). */
-    searchableFields: SearchableField[];
-    /** Lấy id từ entity. */
-    getId: (entity: T) => string;
-    /** Chuyển entity -> document để index (loại bỏ field nhạy cảm). */
-    toDoc: (entity: T) => Record<string, unknown>;
-}
-
-/**
- * Tham số search CHUNG cho mọi index — khai báo 1 lần ở đây.
- * Mỗi entity chỉ cần `extends BaseSearchQuery` rồi thêm field LỌC riêng của nó.
- */
-export interface BaseSearchQuery {
-    q?: string; // từ khoá full-text
-    page?: number | string; // trang, bắt đầu từ 1
-    limit?: number | string; // số bản ghi/trang (tối đa 100)
-    sort?: string; // field để sắp xếp, vd "createdAt". Bỏ trống -> theo độ liên quan (_score)
-    order?: "asc" | "desc"; // chiều sắp xếp, mặc định "desc"
-}
-
-/** Tham số đầy đủ truyền cho engine: query chung + bộ lọc (term). */
-export interface SearchParams extends BaseSearchQuery {
-    filters?: Record<string, string | number | undefined>; // field -> value (lọc chính xác)
-}
-
-export interface PaginatedResult<T> {
-    items: T[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-}
+import {
+    ISearchEngineConfig,
+    ISearchParams,
+    IPaginatedResult,
+} from "src/interfaces/search";
 
 /**
  * Engine search dùng CHUNG cho mọi entity. Viết logic 1 lần:
@@ -54,7 +14,7 @@ export interface PaginatedResult<T> {
  *   export const userSearch = new SearchEngine<UserEntity>({ ...config... });
  */
 export class SearchEngine<T> {
-    constructor(private readonly cfg: SearchEngineConfig<T>) {}
+    constructor(private readonly cfg: ISearchEngineConfig<T>) {}
 
     get index(): string {
         return this.cfg.index;
@@ -107,7 +67,7 @@ export class SearchEngine<T> {
     }
 
     /** Tìm kiếm + lọc + phân trang (offset). */
-    async search(params: SearchParams): Promise<PaginatedResult<unknown>> {
+    async search(params: ISearchParams): Promise<IPaginatedResult<unknown>> {
         const page = Math.max(1, Number(params.page) || 1);
         const limit = Math.min(100, Math.max(1, Number(params.limit) || 20));
         const from = (page - 1) * limit;

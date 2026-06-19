@@ -6,7 +6,10 @@ import { natsConfig } from "./config/nats.config";
 import { elasticsearchConfig } from "./config/elasticsearch.config";
 import { registerCacheInvalidationEvents } from "./events/cacheInvalidation.event";
 import { registerSearchIndexEvents } from "./events/searchIndex.event";
-import { userSearch, reindexUsersIfEmpty } from "./apis/common/user/user.search";
+import {
+    userSearch,
+    reindexUsersIfEmpty,
+} from "./apis/common/user/user.search";
 
 class Application {
     public loadLog(): void {
@@ -35,7 +38,10 @@ class Application {
 
         // Connect Elasticsearch + tạo index "users" nếu chưa có
         await elasticsearchConfig.connect();
-        await elasticsearchConfig.ensureIndex(userSearch.index, userSearch.indexBody);
+        await elasticsearchConfig.ensureIndex(
+            userSearch.index,
+            userSearch.indexBody,
+        );
 
         // Đăng ký subscriber: (1) invalidate cache Redis, (2) index Elasticsearch
         registerCacheInvalidationEvents();
@@ -59,7 +65,3 @@ class Application {
         server.start();
     }
 }
-
-// Gọi đối tượng
-const main = new Application();
-main.initialize();

@@ -1,4 +1,5 @@
-import { SearchEngine, BaseSearchQuery } from "src/helper/base.search.helper";
+import { SearchEngine } from "src/helper/base.search.helper";
+import { IBaseSearchQuery } from "src/interfaces/search";
 import { getRepository } from "src/database/transaction";
 import { UserEntity } from "./user.entity";
 
@@ -72,19 +73,18 @@ export const userSearch = new SearchEngine<UserEntity>({
 });
 
 /* ─────────────── Phần RIÊNG của User ───────────────
- * q / page / limit / sort / order kế thừa từ BaseSearchQuery (khai báo 1 lần).
+ * q / page / limit / sort / order kế thừa từ IBaseSearchQuery (khai báo 1 lần).
  * Ở đây chỉ thêm field LỌC riêng của User là `location`.
  * --------------------------------------------------- */
-export interface SearchUserInput extends BaseSearchQuery {
+export interface SearchUserInput extends IBaseSearchQuery {
     location?: string;
 }
 
-export const searchUsers = (input: SearchUserInput) => {
+export const searchUsers = (input: SearchUserInput) =>
     userSearch.search({
         ...input, // q, page, limit, sort, order đi thẳng qua
         filters: { "us_location.keyword": input.location }, // map field lọc riêng
     });
-};
 
 /** Backfill toàn bộ user vào ES — chỉ khi index đang trống. */
 export const reindexUsersIfEmpty = async (): Promise<void> => {

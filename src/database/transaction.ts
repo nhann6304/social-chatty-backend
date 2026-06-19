@@ -1,6 +1,12 @@
 import { AsyncLocalStorage } from "async_hooks";
-import { EntityManager, EntityTarget, ObjectLiteral, Repository } from "typeorm";
+import {
+    EntityManager,
+    EntityTarget,
+    ObjectLiteral,
+    Repository,
+} from "typeorm";
 import { AppDataSource } from "src/config";
+import { TIsolationLevel } from "src/type/common/IsolationLevel.type";
 
 /* ──────────────────────────── Context (CLS) ────────────────────────────
  * Lưu EntityManager của transaction đang chạy theo async-context, nhờ vậy
@@ -22,20 +28,13 @@ export const getManager = (): EntityManager =>
  *   private get userRepository() { return getRepository(UserEntity); }
  */
 export const getRepository = <Entity extends ObjectLiteral>(
-    target: EntityTarget<Entity>
+    target: EntityTarget<Entity>,
 ): Repository<Entity> => getManager().getRepository(target);
 
 /* ─────────────────────── Runner (begin/commit/rollback) ─────────────────
  * LÕI transaction. Thường ngày dùng @StartTransaction cho gọn; chỉ gọi trực
  * tiếp runTransaction khi cần kiểm soát thủ công (vd tách side-effect ra ngoài).
  * ----------------------------------------------------------------------- */
-
-/** Mức cô lập của transaction (mặc định InnoDB là "REPEATABLE READ"). */
-export type IsolationLevel =
-    | "READ UNCOMMITTED"
-    | "READ COMMITTED"
-    | "REPEATABLE READ"
-    | "SERIALIZABLE";
 
 /**
  * Chạy một khối nghiệp vụ trong MỘT transaction để đảm bảo ACID.
@@ -45,7 +44,7 @@ export type IsolationLevel =
  */
 export const runTransaction = async <T>(
     handler: (manager: EntityManager) => Promise<T>,
-    isolationLevel?: IsolationLevel
+    isolationLevel?: TIsolationLevel,
 ): Promise<T> => {
     const queryRunner = AppDataSource.createQueryRunner();
 
@@ -55,7 +54,7 @@ export const runTransaction = async <T>(
     try {
         // Chạy handler trong async-context để getRepository() bám đúng transaction.
         const result = await transactionContext.run(queryRunner.manager, () =>
-            handler(queryRunner.manager)
+            handler(queryRunner.manager),
         );
         await queryRunner.commitTransaction();
         return result;

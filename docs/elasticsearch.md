@@ -100,7 +100,7 @@ Không cần cài plugin. `multi_match` còn bật `fuzziness: AUTO` nên gõ sa
 
 ## 4. API: `GET /users/search`
 
-Param chung (`q`, `page`, `limit`, `sort`, `order`) đến từ `BaseSearchQuery`; riêng `location` là của User.
+Param chung (`q`, `page`, `limit`, `sort`, `order`) đến từ `IBaseSearchQuery`; riêng `location` là của User.
 
 | Query param | Ý nghĩa | Mặc định |
 |---|---|---|
@@ -159,10 +159,10 @@ export const postSearch = new SearchEngine<PostEntity>({
 
 Có ngay `postSearch.indexOne / removeOne / reindex / count / search`.
 
-**Input search:** `q / page / limit / sort / order` đã nằm trong `BaseSearchQuery` (khai báo 1 lần). Entity chỉ `extends` rồi thêm field LỌC riêng:
+**Input search:** `q / page / limit / sort / order` đã nằm trong `IBaseSearchQuery` (khai báo 1 lần). Entity chỉ `extends` rồi thêm field LỌC riêng:
 
 ```ts
-export interface SearchPostInput extends BaseSearchQuery {
+export interface SearchPostInput extends IBaseSearchQuery {
     tag?: string; // field lọc riêng của Post
 }
 
